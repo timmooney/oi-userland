@@ -11,17 +11,20 @@
 
 #
 # Copyright 2017 Alexander Pyhalov
+# Copyright 2019 Tim Mooney
 #
+
+PREFERRED_BITS=     64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= rhythmbox
-COMPONENT_VERSION= 3.4.2
+COMPONENT_VERSION= 3.4.3
 COMPONENT_SUMMARY= Rhythmbox Multimedia Player
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:c27622fb7658d3c8e935937a562ebd8a65f5316a12694d6a06cb17f790b6ec43
+  sha256:fdc1c0c9dca689dea1872da28a7be30a1d5b12e6dda1b4b51c62d79deeb1a3fb
 COMPONENT_ARCHIVE_URL= \
   http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/3.4/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gnome.org
@@ -45,19 +48,28 @@ COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D) )
 
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --disable-browser-plugin
-CONFIGURE_OPTIONS+= --libexecdir=/usr/lib
+CONFIGURE_OPTIONS+= --libexecdir=/usr/lib/$(MACH64)
 CONFIGURE_OPTIONS+= --localstatedir=/var/lib
-CONFIGURE_ENV    += PYTHON=$(PYTHON.3.4.$(BITS))
+CONFIGURE_ENV    += PYTHON=$(PYTHON.3.5.$(BITS))
 
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
+COMPONENT_BUILD_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH.$(BITS))"
 
-build: $(BUILD_32)
+build: $(BUILD_64)
 
-install: $(INSTALL_32)
+install: $(INSTALL_64)
 
 # Build dependencies
 REQUIRED_PACKAGES += text/itstool
+
+#
+# no longer required as of 3.4.3
+#
+#REQUIRED_PACKAGES += library/libmtp
+#REQUIRED_PACKAGES += service/hal
+#REQUIRED_PACKAGES += system/library/libdbus
+#REQUIRED_PACKAGES += system/library/libdbus-glib
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += desktop/cd-burning/brasero
@@ -72,15 +84,11 @@ REQUIRED_PACKAGES += library/desktop/json-glib
 REQUIRED_PACKAGES += library/desktop/libpeas
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/libmtp
 REQUIRED_PACKAGES += library/libnotify
 REQUIRED_PACKAGES += library/libsoup
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/media-player/totem-pl-parser
 REQUIRED_PACKAGES += library/tdb
-REQUIRED_PACKAGES += service/hal
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/libdbus
-REQUIRED_PACKAGES += system/library/libdbus-glib
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
